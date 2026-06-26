@@ -59,7 +59,7 @@ youtube-summarizer-chat/
 ### Clone the repository
 
 ```bash
-git clone https://github.com/your-username/youtube-summarizer-chat.git
+git clone https://github.com/rajjaiswal159/youtube-summarizer-chat.git
 
 cd youtube-summarizer-chat
 ```
@@ -101,8 +101,6 @@ Create a `.env` file in the project root.
 ```
 GOOGLE_API_KEY=your_google_api_key
 ```
-
-You can get a free API key from Google AI Studio.
 
 ---
 
@@ -157,9 +155,15 @@ Answer
 
 ## 📸 Screenshots
 
-| Home Page | Chat Interface |
-|-----------|----------------|
-| ![](images/home.png) | ![](images/chat.png) |
+# 📸 Home Page
+
+![Home](images/home.png)
+
+---
+
+# 💬 Chat Interface
+
+![Chat](images/chat.png)
 
 ---
 
