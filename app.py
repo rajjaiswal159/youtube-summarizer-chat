@@ -18,20 +18,19 @@ video_url = st.text_input(
 
 # Process button
 if st.button("Process Video"):
+    try:
+        with st.spinner("Processing Video..."):
+            transcript = get_transcript(video_url)
+            chunks = split_text(transcript)
+            st.session_state.vector_store = create_vector_store(chunks)
+            st.session_state.rag_chain = create_rag_chain(
+                st.session_state.vector_store
+            )
 
-    with st.spinner("Processing Video..."):
+        st.success("Video Processed Successfully!")
 
-        transcript = get_transcript(video_url)
-
-        chunks = split_text(transcript)
-
-        st.session_state.vector_store = create_vector_store(chunks)
-
-        st.session_state.rag_chain = create_rag_chain(
-            st.session_state.vector_store
-        )
-
-    st.success("Video Processed Successfully!")
+    except Exception as e:
+        st.error(str(e))
 
 # Question input
 question = st.text_input(
@@ -44,10 +43,13 @@ if st.button("Ask"):
     if "vector_store" not in st.session_state:
         st.error("Process a video first!")
 
+    elif not question.strip():
+        st.warning("Please enter a question.")
+
     else:
-
-        answer = st.session_state.rag_chain.invoke(
-            question
-        )
-
-        st.write(answer)
+        try:
+            answer = st.session_state.rag_chain.invoke(question)
+            st.info(answer)
+        
+        except Exception as e:
+            st.error(str(e))
