@@ -109,7 +109,7 @@ youtube-summarizer-chat/
 ```bash
 git clone https://github.com/rajjaiswal159/youtube-chat-assistant.git
 
-cd youtube-summarizer-chat
+cd youtube-chat-assistant
 ```
 
 ---
