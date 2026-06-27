@@ -7,7 +7,7 @@ def split_text(transcript):
 
     # Create text splitter object
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=2000,
+        chunk_size=1000,
         chunk_overlap=200
     )
 
