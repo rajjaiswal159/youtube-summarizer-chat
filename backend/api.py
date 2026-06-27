@@ -1,10 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from src.transcript import get_transcript
 from src.text_splitter import split_text
-from src.vectorstore import create_vector_store
 from src.chatbot import create_rag_chain
+from src.cache_manager import cleanup_vector_store
+from src.transcript import get_transcript, extract_video_id
+from src.vectorstore import (
+    create_vector_store,
+    save_vector_store,
+    load_vector_store
+)
 
 app = FastAPI(
     title="YouTube Chat API",
@@ -22,6 +26,7 @@ app.add_middleware(
 # Global variables
 vector_store = None
 rag_chain = None
+current_video_id = None
 
 
 @app.get("/")
@@ -34,18 +39,36 @@ async def process_video(data: dict):
 
     global vector_store
     global rag_chain
+    global current_video_id
 
     try:
 
         video_url = data["video_url"]
 
-        transcript = get_transcript(video_url)
+        video_id = extract_video_id(video_url)
 
-        chunks = split_text(transcript)
-
-        vector_store = create_vector_store(chunks)
-
+        # Same video is already loaded
+        if current_video_id == video_id:
+            return {
+                "success": True,
+                "message": "Video is already processed."
+            }
+        
+        # Try loading existing vector store
+        vector_store = load_vector_store(video_id)
+        
+        if vector_store is None:
+            transcript = get_transcript(video_id)
+        
+            chunks = split_text(transcript)
+        
+            vector_store = create_vector_store(chunks)
+        
+            save_vector_store(vector_store, video_id)
+            cleanup_vector_store()
+        
         rag_chain = create_rag_chain(vector_store)
+        current_video_id = video_id
 
         return {
             "success": True,

@@ -34,16 +34,10 @@ def extract_video_id(url):
 
 
 # Fetch transcript from a YouTube video
-def get_transcript(video_url):
-
-    if not video_url.strip():
-        raise ValueError("Please enter a YouTube URL.")
+def get_transcript(video_id):
 
     try:
-
-        # Extract video ID from URL
-        video_id = extract_video_id(video_url)
-
+        
         # Create transcript API instance
         ytt_api = YouTubeTranscriptApi()
     

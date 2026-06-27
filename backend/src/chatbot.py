@@ -15,7 +15,7 @@ def create_rag_chain(vector_store):
 
     # Create retriever
     retriever = vector_store.as_retriever(
-        search_kwargs={"k": 3}
+        search_kwargs={"k": 2}
     )
 
     # Prompt
