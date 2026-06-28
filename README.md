@@ -1,23 +1,21 @@
-# 🎥 YouTube Video Chat Assistant (Chrome Extension + LangChain RAG)
+# 🎥 YouTube Video Chat Assistant (Chrome Extension)
 
-Chat with any YouTube video directly from a Chrome Side Panel using Retrieval-Augmented Generation (RAG).
+Chat with any YouTube video's transcript using Retrieval-Augmented Generation (RAG).
 
-This project extracts a video's transcript, creates vector embeddings using Google's Gemini Embedding model, stores them in FAISS, and allows users to ask natural language questions about the video without leaving YouTube.
+This project is a Chrome Extension powered by **LangChain**, **FAISS**, **Google Gemini Embeddings**, and **FastAPI**. It extracts the transcript of the currently opened YouTube video, converts it into embeddings, stores them in a vector database, and answers user questions based only on the video's content.
 
 ---
 
 ## 🚀 Features
 
-- 📺 Process any YouTube video with transcripts
-- 💬 Ask questions about the video in natural language
+- 📺 Chat with any YouTube video transcript
 - 🧠 Retrieval-Augmented Generation (RAG)
-- ⚡ Chrome Side Panel Extension
-- 🔍 LangChain-powered retrieval pipeline
-- 📚 FAISS Vector Store
+- ⚡ FastAPI backend
+- 🔍 Semantic search using FAISS
 - 🤖 Google Gemini Embeddings
-- 💾 Automatic vector store caching (avoids recreating embeddings for previously processed videos)
-- 🎯 FastAPI backend
-- 🎨 Custom HTML/CSS/JavaScript frontend
+- 🧩 Chrome Side Panel Extension
+- 💬 Clean HTML/CSS/JavaScript UI
+- 📄 Automatic transcript extraction
 
 ---
 
@@ -50,51 +48,18 @@ Answer in Chrome Side Panel
 
 ---
 
-## 📂 Project Structure
-
-```
-youtube-summarizer-chat/
-│
-├── backend/
-│   ├── api.py                    # FastAPI backend and API endpoints
-│   ├── src/
-│   │   ├── chatbot.py            # Builds the LangChain RAG pipeline
-│   │   ├── cache_manager.py      # Manages cached FAISS vector stores
-│   │   ├── text_splitter.py      # Splits transcript into chunks
-│   │   ├── transcript.py         # Fetches YouTube transcripts
-│   │   └── vectorstore.py        # Creates, saves, and loads FAISS vector stores
-│   └── vector_store/             # Cached vector stores for processed videos
-│
-├── extension/
-│   ├── manifest.json             # Chrome extension configuration
-│   ├── background.js             # Handles extension background events
-│   ├── sidepanel.html            # Side panel UI
-│   ├── sidepanel.css             # Side panel styling
-│   └── sidepanel.js              # Frontend logic and API communication
-│
-├── images/
-│   ├── home.png                  # Home screen screenshot
-│   └── chat.png                  # Chat interface screenshot
-│
-├── requirements.txt              # Python dependencies
-├── README.md                     # Project documentation
-└── .gitignore                    # Files ignored by Git
-```
-
----
 
 ## 🛠️ Tech Stack
 
 ### Backend
-
 - Python
 - FastAPI
 - LangChain
-- Google Gemini API
 - FAISS
+- Google Gemini API
+- YouTube Transcript API
 
 ### Frontend
-
 - HTML
 - CSS
 - JavaScript
@@ -102,90 +67,57 @@ youtube-summarizer-chat/
 
 ---
 
-## ⚙️ Installation
+# 📁 Project Structure
 
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/rajjaiswal159/youtube-chat-assistant.git
-
-cd youtube-chat-assistant
+```text
+youtube-video-chat/
+│
+├── backend/
+│   ├── api.py                     # FastAPI server
+│   │
+│   ├── src/
+│   │   ├── transcript.py          # Fetch YouTube transcript
+│   │   ├── text_splitter.py       # Split transcript into chunks
+│   │   ├── vectorstore.py         # Create FAISS vector database
+│   │   ├── chatbot.py             # LangChain RAG pipeline
+│   │   ├── cache_manager.py       # Cache processed videos
+│   │   └── chat_session.py        # Maintain chat history
+│   │
+│   └── vector_store_gm/           # Saved FAISS index
+│
+├── extension/
+│   ├── manifest.json              # Chrome extension configuration
+│   ├── background.js              # Background service worker
+│   ├── sidepanel.html             # Extension UI
+│   ├── sidepanel.css              # Styling
+│   └── sidepanel.js               # Frontend logic
+│
+├── images/
+│   ├── home.png                   # Home page screenshot
+│   └── chat.png                   # Chat page screenshot
+│
+├── requirements.txt               # Python dependencies
+├── README.md                      # Project documentation
+└── .gitignore                     # Files ignored by Git
 ```
 
 ---
 
-### 2. Create a virtual environment
+# ⚙️ How It Works
 
-```bash
-python -m venv venv
-```
-
-Activate it:
-
-**Windows**
-
-```bash
-venv\Scripts\activate
-```
-
-**Linux / macOS**
-
-```bash
-source venv/bin/activate
-```
+1. User opens a YouTube video.
+2. Chrome Extension extracts the video ID.
+3. Backend fetches the transcript.
+4. Transcript is split into smaller chunks.
+5. Chunks are converted into embeddings.
+6. Embeddings are stored in a FAISS vector database.
+7. User asks a question.
+8. Relevant transcript chunks are retrieved.
+9. Gemini generates an answer using the retrieved context.
 
 ---
 
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-### 4. Configure environment variables
-
-Create a `.env` file in the project root.
-
-```
-GOOGLE_API_KEY=YOUR_GEMINI_API_KEY
-```
-
----
-
-### 5. Start the backend
-
-```bash
-cd backend
-
-uvicorn api:app --reload
-```
-
-Backend runs on
-
-```
-http://127.0.0.1:8000
-```
-
----
-
-### 6. Load the Chrome Extension
-
-1. Open Chrome
-2. Go to:
-
-```
-chrome://extensions
-```
-
-3. Enable **Developer Mode**
-4. Click **Load unpacked**
-5. Select the `extension` folder
-
----
-
-## 📸 Screenshots
+## 🖼️ Screenshots
 
 ### Home
 
@@ -197,47 +129,112 @@ chrome://extensions
 
 ---
 
-## 💡 How It Works
+# 🚀 Installation
 
-1. User opens a YouTube video.
-2. Clicks **Process**.
-3. Transcript is extracted.
-4. Transcript is split into chunks.
-5. Chunks are converted into embeddings.
-6. Embeddings are stored in FAISS.
-7. User asks questions.
-8. LangChain retrieves relevant chunks.
-9. Gemini generates the final answer.
+## 1. Clone the repository
+
+```bash
+git clone https://github.com/rajjaiswal159/youtube-chat-assistant.git
+
+cd youtube-chat-assistant
+```
 
 ---
 
-## ⚡ Vector Store Caching
+## 2. Create a virtual environment
 
-To improve performance, processed videos are cached locally.
+```bash
+python -m venv venv
+```
 
-- Each YouTube video is identified by its unique Video ID.
-- Embeddings are generated only once.
-- Previously processed videos reuse the existing FAISS index.
-- Processing the same video again is almost instantaneous.
+Activate it
+
+### Windows
+
+```bash
+venv\Scripts\activate
+```
+
+### Linux / macOS
+
+```bash
+source venv/bin/activate
+```
 
 ---
 
-## 🤝 Contributing
+## 3. Install dependencies
 
-Contributions are welcome.
-
-Feel free to fork the repository and submit a pull request.
+```bash
+pip install -r requirements.txt
+```
 
 ---
 
-## 📄 License
+## 4. Create a .env file
+
+```env
+GOOGLE_API_KEY=YOUR_API_KEY
+```
+
+---
+
+## 5. Start FastAPI
+
+```bash
+cd backend
+
+uvicorn api:app --reload
+```
+
+Server runs at
+
+```
+http://127.0.0.1:8000
+```
+
+---
+
+## 6. Load Chrome Extension
+
+- Open Chrome
+- Go to `chrome://extensions`
+- Enable **Developer Mode**
+- Click **Load unpacked**
+- Select the `extension` folder
+
+---
+
+## 💡 Example Questions
+
+- What is this video about?
+- Summarize the key points.
+- Explain the main concept.
+- What examples were discussed?
+- What are the important takeaways?
+
+---
+
+# 📚 Concepts Used
+
+- Retrieval-Augmented Generation (RAG)
+- Embeddings
+- Vector Databases
+- Semantic Search
+- Chunking
+- Prompt Engineering
+- FastAPI
+- LangChain
+- Chrome Extensions
+
+---
+
+# ⭐ Support
+
+If you found this project helpful, consider giving it a ⭐ on GitHub.
+
+---
+
+# 📄 License
 
 This project is licensed under the MIT License.
-
----
-
-## 👨‍💻 Author
-
-**Raj Jaiswal**
-
-GitHub: https://github.com/rajjaiswal159

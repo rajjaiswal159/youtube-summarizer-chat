@@ -1,6 +1,6 @@
 from langchain_core.messages import HumanMessage, AIMessage
 
-MAX_MESSAGES = 20
+MAX_MESSAGES = 10
 
 chat_history = []
 
