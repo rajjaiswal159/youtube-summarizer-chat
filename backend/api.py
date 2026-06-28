@@ -4,6 +4,12 @@ from src.text_splitter import split_text
 from src.chatbot import create_rag_chain
 from src.cache_manager import cleanup_vector_store
 from src.transcript import get_transcript, extract_video_id
+from src.chat_session import (
+    clear_history,
+    get_history,
+    add_user_message,
+    add_ai_message,
+)
 from src.vectorstore import (
     create_vector_store,
     save_vector_store,
@@ -68,6 +74,9 @@ async def process_video(data: dict):
             cleanup_vector_store()
         
         rag_chain = create_rag_chain(vector_store)
+
+        clear_history()
+        
         current_video_id = video_id
 
         return {
@@ -98,7 +107,15 @@ async def chat(data: dict):
 
         question = data["question"]
 
-        answer = rag_chain.invoke(question)
+        answer = rag_chain.invoke(
+            {
+                "question": question,
+                "chat_history": get_history()
+            }
+        )
+        
+        add_user_message(question)
+        add_ai_message(answer)
 
         return {
             "success": True,

@@ -1,5 +1,5 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.runnables import RunnableLambda
@@ -19,19 +19,34 @@ def create_rag_chain(vector_store):
     )
 
     # Prompt
-    prompt = ChatPromptTemplate.from_template(
-        """
-        Answer the question using only the context below.
+    prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            """
+            You are an AI assistant that answers questions about a YouTube video.
+            
+            Use ONLY the provided transcript context to answer the user's question.
+            
+            If the answer is not in the transcript, reply:
+            "I couldn't find that information in the video transcript."
+            
+            Be accurate, concise, and clear.
+            Use Markdown formatting and bullet points when helpful.
+            Do not make up information.
+            
+            Transcript Context:
+            {context}
+            """
+        ),
 
-        Context:
-        {context}
+        MessagesPlaceholder(variable_name="chat_history"),
 
-        Question:
-        {question}
-
-        If the answer is not in the context,
-        say "I could not find that information in the video."
-        """
+        (
+            "human",
+            "{question}"
+        )
+    ]
     )
 
     # LLM
@@ -42,8 +57,13 @@ def create_rag_chain(vector_store):
     # LCEL Chain
     chain = (
         {
-            "context": retriever | RunnableLambda(format_docs),
-            "question": RunnablePassthrough()
+            "context": (
+                RunnableLambda(lambda x: x["question"])
+                | retriever
+                | RunnableLambda(format_docs)
+            ),
+            "question": RunnableLambda(lambda x: x["question"]),
+            "chat_history": RunnableLambda(lambda x: x["chat_history"]),
         }
         | prompt
         | llm

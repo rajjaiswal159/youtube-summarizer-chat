@@ -106,7 +106,11 @@ sendBtn.addEventListener("click", async () => {
 
         const data = await response.json();
 
-        thinking.innerHTML = data.answer;
+        if (data.success) {
+            thinking.innerHTML = data.answer;
+        } else {
+            thinking.innerHTML = `❌ ${data.message}`;
+        }
 
         sendBtn.disabled = false;
 
