@@ -123,6 +123,13 @@ async def chat(data: dict):
         }
 
     except Exception as e:
+        error = str(e)
+        
+        if "429" in error or "quota" in error.lower():
+            return {
+                "success": False,
+                "message": "The AI service has reached its usage limit. Please try again later."
+            }
 
         return {
             "success": False,
