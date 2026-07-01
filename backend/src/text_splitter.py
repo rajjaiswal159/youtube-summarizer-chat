@@ -1,18 +1,18 @@
-# Import recursive text splitter
+# Import the text splitter
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
 # Split transcript into chunks
 def split_text(transcript):
 
-    # Create text splitter object
+    # Create the text splitter
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
         chunk_overlap=200
     )
 
-    # Convert transcript into chunks
+    # Split the transcript 
     chunks = splitter.split_text(transcript)
 
-    # Return chunk list
+    # Return the chunks 
     return chunks
