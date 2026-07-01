@@ -11,8 +11,6 @@ from urllib.parse import urlparse, parse_qs
 
 
 # Extract video ID from a YouTube URL
-from urllib.parse import urlparse, parse_qs
-
 def extract_video_id(url):
 
     # Handle short youtu.be URLs
